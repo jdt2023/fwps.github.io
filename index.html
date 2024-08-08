@@ -1,0 +1,121 @@
+<html><head><base href="https://editor.example.com/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SimpleDoc - Online Text Editor</title>
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    height: 100%;
+  }
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .toolbar {
+    background-color: #f0f0f0;
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+  }
+  .editor {
+    flex-grow: 1;
+    padding: 20px;
+    border: 1px solid #ccc;
+    outline: none;
+    overflow-y: auto;
+  }
+  button {
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  .status-bar {
+    background-color: #f0f0f0;
+    padding: 5px 10px;
+    font-size: 0.8em;
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="toolbar">
+    <button onclick="document.execCommand('bold')">粗体</button>
+    <button onclick="document.execCommand('italic')">斜体</button>
+    <button onclick="document.execCommand('underline')">下划线</button>
+    <button onclick="changeColor()">文字颜色</button>
+    <button onclick="changeFontSize()">字体大小</button>
+    <button onclick="alignLeft()">左对齐</button>
+    <button onclick="alignCenter()">居中</button>
+    <button onclick="alignRight()">右对齐</button>
+    <button onclick="insertList('unordered')">无序列表</button>
+    <button onclick="insertList('ordered')">有序列表</button>
+    <button onclick="saveDocument()">保存</button>
+    <button onclick="loadDocument()">加载</button>
+  </div>
+  <div class="editor" contenteditable="true" id="editor">
+    在这里开始输入您的文档...
+  </div>
+  <div class="status-bar">
+    <span id="wordCount">字数：0</span>
+    <span id="charCount">字符数：0</span>
+  </div>
+</div>
+
+<script>
+function changeColor() {
+  const color = prompt("输入颜色（如 red, #ff0000）：");
+  if (color) document.execCommand('foreColor', false, color);
+}
+
+function changeFontSize() {
+  const size = prompt("输入字体大小（1-7）：");
+  if (size) document.execCommand('fontSize', false, size);
+}
+
+function alignLeft() {
+  document.execCommand('justifyLeft');
+}
+
+function alignCenter() {
+  document.execCommand('justifyCenter');
+}
+
+function alignRight() {
+  document.execCommand('justifyRight');
+}
+
+function insertList(type) {
+  document.execCommand(type === 'unordered' ? 'insertUnorderedList' : 'insertOrderedList');
+}
+
+function saveDocument() {
+  const content = document.getElementById('editor').innerHTML;
+  localStorage.setItem('savedDocument', content);
+  alert('文档已保存！');
+}
+
+function loadDocument() {
+  const savedContent = localStorage.getItem('savedDocument');
+  if (savedContent) {
+    document.getElementById('editor').innerHTML = savedContent;
+    updateCounts();
+  } else {
+    alert('没有找到保存的文档！');
+  }
+}
+
+function updateCounts() {
+  const text = document.getElementById('editor').innerText;
+  document.getElementById('wordCount').textContent = `字数：${text.trim().split(/\s+/).length}`;
+  document.getElementById('charCount').textContent = `字符数：${text.length}`;
+}
+
+document.getElementById('editor').addEventListener('input', updateCounts);
+updateCounts();
+</script>
+</body>
+</html>
